@@ -96,11 +96,13 @@ def processRequest(req):
     #minimum_value=processMinimum(req)
     maximum_value=processMaximum(req)
     latest=processLatestProperties(req)
+    longitude = getLongitude(req)
+    latitude = getLatitude(req)
     #if minimum_value > maximum_value:
     #    minimum_value,maximum_value=maximum_value,minimum_value
     #else:
     # minimum_value,maximum_value=minimum_value,maximum_value    
-    baseurl = "https://fazendanatureza.com/bot/botarz.php?city_name="+city_names+"&sector_name="+sector_names+"&minPrice="+maximum_value+"&type="+property_type+"&LatestProperties="+latest+"&UnitArea="+area_property+"&Unit="+unit_property+"&school="+school+"&airport="+airport+"&transport="+transport+"&security="+security+"&shopping_mall="+malls+"&fuel="+fuel
+    baseurl = "https://fazendanatureza.com/bot/botarz.php?city_name="+city_names+"&sector_name="+sector_names+"&minPrice="+maximum_value+"&type="+property_type+"&LatestProperties="+latest+"&UnitArea="+area_property+"&Unit="+unit_property+"&school="+school+"&airport="+airport+"&transport="+transport+"&security="+security+"&shopping_mall="+malls+"&fuel="+fuel+"&longitude="+longitude+"&latitude="+latitude
     result = urllib.urlopen(baseurl).read()
     data = json.loads(result)
     res = makeWebhookResult(data)
@@ -111,6 +113,26 @@ def processIntentName(req):
     parameters = result.get("metadata")
     intent = parameters.get("intentName")
     return intent
+
+def getLongitude(req):
+    entry = req.get("entry")
+    messaging = entry.get("messaging")
+    message = messaging.get("message")
+    attachments = message.get("attachments")
+    payload = attachments.get("payload")
+    coordinates = payload.get("coordinates")
+    longitude = coordinates.get("long")
+    return longitude
+
+def getLatitude(req):
+    entry = req.get("entry")
+    messaging = entry.get("messaging")
+    message = messaging.get("message")
+    attachments = message.get("attachments")
+    payload = attachments.get("payload")
+    coordinates = payload.get("coordinates")
+    latitude = coordinates.get("lat")
+    return latitude
 
 def processlocation(req):
     result = req.get("result")
